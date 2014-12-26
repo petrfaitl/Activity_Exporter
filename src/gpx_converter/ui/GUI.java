@@ -29,6 +29,7 @@ public class GUI extends javax.swing.JFrame
     private OSFinder os;
     private String deviceSelectorSelection;
     private FileNameExtensionFilter filter;
+    private String appVersionText = "v0.1";
 
     /**
      * Creates new form NewJFrameTest
@@ -40,6 +41,7 @@ public class GUI extends javax.swing.JFrame
         this.os = new OSFinder();
         this.deviceSelectorSelection = deviceSelectorCombo.getSelectedItem().toString().toUpperCase();
         this.inputFile = setInputFile(deviceSelectorSelection);
+        appVersion.setText(appVersionText);
         setSubhead();
 
     }
@@ -108,6 +110,7 @@ public class GUI extends javax.swing.JFrame
         results = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
         deviceSelectorCombo = new javax.swing.JComboBox();
+        appVersion = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -162,6 +165,9 @@ public class GUI extends javax.swing.JFrame
             }
         });
 
+        appVersion.setText("version");
+        appVersion.setToolTipText("");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -179,7 +185,11 @@ public class GUI extends javax.swing.JFrame
                             .addComponent(deviceSelectorCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(subHead, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE))
-                        .addComponent(heading)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(heading)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(appVersion)
+                            .addGap(14, 14, 14))
                         .addComponent(results)
                         .addComponent(jSeparator3)))
                 .addContainerGap())
@@ -188,7 +198,9 @@ public class GUI extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(heading)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(heading)
+                    .addComponent(appVersion))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(subHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -318,6 +330,7 @@ public class GUI extends javax.swing.JFrame
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel appVersion;
     private javax.swing.JButton browseButton;
     private javax.swing.JButton convertButton;
     private javax.swing.JComboBox deviceSelectorCombo;
