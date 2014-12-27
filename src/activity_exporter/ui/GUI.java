@@ -1,8 +1,8 @@
-package gpx_converter.ui;
+package activity_exporter.ui;
 
-import gpx_converter.FileManager;
-import gpx_converter.domain.FileSource;
-import gpx_converter.domain.OSFinder;
+import activity_exporter.FileManager;
+import activity_exporter.domain.FileSource;
+import activity_exporter.domain.OSFinder;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

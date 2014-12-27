@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gpx_converter;
+package activity_exporter;
 
-import gpx_converter.domain.OSFinder;
+import activity_exporter.domain.OSFinder;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +31,6 @@ public class FileManager
     private boolean fileSaved;
     private boolean correctFileFormat;
     private Scanner reader;
-    private OSFinder os;
     private String activityName;
     private BufferedReader br;
 
@@ -49,7 +48,6 @@ public class FileManager
     public FileManager()
     {
         this.sb = new StringBuilder();
-        this.os = new OSFinder();
         this.activityName = "Workout-";
         
     }

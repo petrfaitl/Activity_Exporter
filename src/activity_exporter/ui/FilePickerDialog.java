@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gpx_converter.ui;
+package activity_exporter.ui;
 
 import java.awt.FileDialog;
 import java.awt.Frame;

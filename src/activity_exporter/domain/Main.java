@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gpx_converter.domain;
+package activity_exporter.domain;
 
-import gpx_converter.ui.*;
+import activity_exporter.ui.GUI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
