@@ -122,8 +122,12 @@ public class GPXOutput
 
     public String appendHead()
     {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<gpx creator=\"Activity Exporter\" version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n"
+        return "<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd "
+                + "http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 "
+                + "http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" "
+                + "xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" "
+                + "version=\"1.1\" creator=\"ActivityExporter\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n"
                 + "  <trk>\n"
                 + "    <trkseg>\n";
     }
