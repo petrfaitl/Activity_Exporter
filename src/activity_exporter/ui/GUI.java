@@ -25,7 +25,7 @@ public class GUI extends javax.swing.JFrame
 {
 
     private final FileManager fm;
-    private File inputFile;
+    private File inputPath;
     private OSFinder os;
     private String deviceSelectorSelection;
     private FileNameExtensionFilter filter;
@@ -40,7 +40,7 @@ public class GUI extends javax.swing.JFrame
         this.fm = new FileManager();
         this.os = new OSFinder();
         this.deviceSelectorSelection = deviceSelectorCombo.getSelectedItem().toString().toUpperCase();
-        this.inputFile = setInputFile(deviceSelectorSelection);
+        this.inputPath = setInputPath(deviceSelectorSelection);
         appVersion.setText(appVersionText);
         setSubhead();
 
@@ -52,7 +52,7 @@ public class GUI extends javax.swing.JFrame
         subHead.setText(displayText);
     }
 
-    private File setInputFile(String source)
+    private File setInputPath(String source)
     {
         String inputSource = null;
 
@@ -227,7 +227,7 @@ public class GUI extends javax.swing.JFrame
     {//GEN-HEADEREND:event_browseButtonActionPerformed
         // TODO add your handling code here:
         JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(inputFile);
+        chooser.setCurrentDirectory(inputPath);
         if (filter != null)
         {
             chooser.setFileFilter(filter);

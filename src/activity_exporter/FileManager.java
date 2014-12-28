@@ -6,6 +6,9 @@
 package activity_exporter;
 
 import activity_exporter.domain.OSFinder;
+import activity_exporter.formats.SMLFile;
+import activity_exporter.domain.SAXHandler;
+import activity_exporter.formats.GPXOutput;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,10 +16,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  *
@@ -30,18 +41,15 @@ public class FileManager
     private File fileOut;
     private boolean fileSaved;
     private boolean correctFileFormat;
-    private Scanner reader;
+
     private String activityName;
-    private BufferedReader br;
 
     public FileManager(String filename)
     {
-        
+
         this();
         //setFileName(filename);
         //this.correctFileFormat = false;
-
-        
 
     }
 
@@ -49,9 +57,9 @@ public class FileManager
     {
         this.sb = new StringBuilder();
         this.activityName = "Workout-";
-        
+
     }
-    
+
     public void clear()
     {
         this.sb = new StringBuilder();
@@ -60,11 +68,13 @@ public class FileManager
     public void setInputFileName(String filename)
     {
         this.fileIn = new File(filename);
-        
+
     }
+
+
     private void setOutputFileName()
     {
-        File dir = new File(System.getProperty ("user.home")+ System.getProperty("file.separator")+"Downloads");
+        File dir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Downloads");
         dir.mkdir();
         this.fileOut = new File(dir, fileOutName(fileIn.toString()));
     }
@@ -77,124 +87,33 @@ public class FileManager
 
     private void readFile()
     {
-        int lineCounter = 0;
+        
         try
         {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
+            SAXHandler saxHandler = new SAXHandler();
+            saxParser.parse(fileIn, saxHandler);
             
-            String headPattern = Regex.HEAD.getPattern();
-            String namePattern = Regex.NAME.getPattern();
-            String footerPattern = Regex.FOOTER.getPattern();
-            String lonPattern = Regex.LON.getPattern();
-            String latPattern = Regex.LAT.getPattern();
-            String utcPattern = Regex.UTC.getPattern();
-            String elePattern = Regex.ELE.getPattern();
-            String gpsElePattern = Regex.GPSELE.getPattern();
-            String activityNamePattern = Regex.ACTIVITY.getPattern();
-            String sampleStartPattern = Regex.SAMPLE_START.getPattern();
-            String sampleEndPattern = Regex.SAMPLE_START.getPattern();
-            String ele = "0";
+            GPXOutput gpxOut = new GPXOutput(saxHandler);
+            
+            activityName = saxHandler.getHeaderTags().getActivityName() + "-";
+            sb = gpxOut.buildOutputFile();
+
             
 
-            sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            sb.append("<gpx creator=\"GPX Converter\" version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n");
-            sb.append("  <trk>\n").append("    <trkseg>\n");
             
-           // reader = new Scanner(fileIn);
-            br = new BufferedReader(new FileReader(fileIn));
-            //while (reader.hasNextLine())
-            String line = "";
-            while((line=br.readLine())!=null)
-            {
-                lineCounter++;
-               // String line = reader.nextLine();
-                if (Pattern.matches(activityNamePattern, line))
-                {
 
-                    activityName = contentExtractor("Activity", line);
-                    
-
-                }
-
-                if (Pattern.matches(sampleStartPattern, line))
-                {
-
-                    String lat = "";
-                    String lon = "";
-                    String time = "";
-                    
-                    boolean hasLocation = false;
-                    while (!Pattern.matches(sampleEndPattern, line=br.readLine()))
-                    {
-                        
-                        if (Pattern.matches(lonPattern, line))
-                        {
-                            hasLocation = true;
-                            lon = contentExtractor("Longitude", line);
-                        } else if(Pattern.matches(latPattern, line))
-                        {
-                            lat = contentExtractor("Longitude", line);
-                        }else if(Pattern.matches(utcPattern, line))
-                        {
-                            time = contentExtractor("UTC", line);
-                        }else if(Pattern.matches(elePattern, line))
-                        {
-                            ele = contentExtractor("Altitude", line);
-                        }
-                        else if(Pattern.matches(gpsElePattern, line))
-                        {
-                            ele = contentExtractor("GPSAltitude", line);
-                        }else
-                        {
-                            continue;
-                        }
-                     
-                    }
-                    if(hasLocation)
-                    {
-                        sb.append("      <trkpt lat=\"").append(lat).append("\" lon=\"").append(lon).append("\">\n");
-                        sb.append("        <ele>").append(ele).append("</ele>\n");
-                        sb.append("        <time>").append(time).append("</time>\n");
-                        sb.append("      </trkpt>\n");
-                    }
-                }
-//                if(Pattern.matches(footerPattern, line))
-//                {
-//                    sb.append("    </trkseg>\n").append("  </trk>\n").append("</gpx>");
-//                    break;
-//                }
-                
-
-            }
-            sb.append("    </trkseg>\n").append("  </trk>\n").append("</gpx>");
-            
-            br.close();
-            reader.close();
-                     
-        } catch (Exception e)
+        } catch (IOException e)
         {
-            System.out.println("Error reading file, at line "+ lineCounter);
-            e.printStackTrace();
             System.out.println("Exception Bluck");
 
-        }
-    }
-
-    private String contentExtractor(String tagName, String line)
-    {
-        int startBracketIndex = line.indexOf('>');
-        int endBracketIndex = line.substring(startBracketIndex).indexOf("<");
-        return (line.substring(startBracketIndex + 1, startBracketIndex + endBracketIndex));
-    }
-
-    private void copyFile()
-    {
-        while (reader.hasNextLine())
+        } catch (ParserConfigurationException | SAXException e)
         {
-            String line = reader.nextLine();
+            e.printStackTrace();
+            System.out.println("Exception Bluck");
+        } 
 
-            sb.append(line);
-            sb.append("\n");
-        }
     }
 
     private String fileOutName(String filename)
