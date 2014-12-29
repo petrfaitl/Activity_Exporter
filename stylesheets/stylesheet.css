@@ -315,9 +315,27 @@ Full-Width Styles
   text-shadow: #111 0px 0px 10px;
 }
 
+#under_construction {
+  display: block;
+  position: absolute;
+  float: right;
+  right:90px;
+  z-index: 10;
+  padding: 5px 5px 5px 5px;
+  bottom: 5px;
+  color: #fff;
+  font-weight: 700;
+  background: #0090ff no-repeat 95% 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,.5);
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
 #downloads {
   position: absolute;
-  width: 210px;
+  width: 300px;
   z-index: 10;
   bottom: -40px;
   right: 0;
