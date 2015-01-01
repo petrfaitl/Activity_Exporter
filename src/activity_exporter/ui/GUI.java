@@ -28,8 +28,9 @@ public class GUI extends javax.swing.JFrame
     private File inputPath;
     private OSFinder os;
     private String deviceSelectorSelection;
+    private String outputFileFormatSelection;
     private FileNameExtensionFilter filter;
-    private String appVersionText = "v0.1";
+    private String appVersionText = "v0.2";
 
     /**
      * Creates new form NewJFrameTest
@@ -40,6 +41,7 @@ public class GUI extends javax.swing.JFrame
         this.fm = new FileManager();
         this.os = new OSFinder();
         this.deviceSelectorSelection = deviceSelectorCombo.getSelectedItem().toString().toUpperCase();
+        this.outputFileFormatSelection = outputFileFormatCombo.getSelectedItem().toString();
         this.inputPath = setInputPath(deviceSelectorSelection);
         appVersion.setText(appVersionText);
         setSubhead();
@@ -48,7 +50,7 @@ public class GUI extends javax.swing.JFrame
 
     private void setSubhead()
     {
-        String displayText = String.format("Extracts .gpx file from %s watch workout", deviceSelectorSelection);
+        String displayText = String.format("Extracts %s file from %s watch workout", outputFileFormatSelection,deviceSelectorSelection);
         subHead.setText(displayText);
     }
 
@@ -107,23 +109,31 @@ public class GUI extends javax.swing.JFrame
         sourceFileNameText = new javax.swing.JTextField();
         browseButton = new javax.swing.JButton();
         convertButton = new javax.swing.JButton();
-        results = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
         deviceSelectorCombo = new javax.swing.JComboBox();
         appVersion = new javax.swing.JLabel();
+        sourceDeviceLabel = new javax.swing.JLabel();
+        outputFileFormatLabel = new javax.swing.JLabel();
+        outputFileFormatCombo = new javax.swing.JComboBox();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        jSeparator4 = new javax.swing.JSeparator();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        resultTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         heading.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
-        heading.setText("GPX Extractor");
+        heading.setText("Activity Exporter");
         heading.setToolTipText("");
 
+        subHead.setForeground(javax.swing.UIManager.getDefaults().getColor("CheckBoxMenuItem.selectionBackground"));
         subHead.setText("Extracts .gpx file");
         subHead.setToolTipText("");
+        subHead.setMaximumSize(new java.awt.Dimension(224, 16));
         subHead.setPreferredSize(new java.awt.Dimension(107, 27));
 
         sourceFileNameText.setEditable(false);
-        sourceFileNameText.setText("Browse for source file");
+        sourceFileNameText.setText("Click \"Browse...\" button to choose source file");
         sourceFileNameText.setPreferredSize(new java.awt.Dimension(84, 35));
         sourceFileNameText.addActionListener(new java.awt.event.ActionListener()
         {
@@ -154,9 +164,12 @@ public class GUI extends javax.swing.JFrame
             }
         });
 
-        results.setText("Ready");
-
         deviceSelectorCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Suunto" }));
+        deviceSelectorCombo.setAlignmentX(1.0F);
+        deviceSelectorCombo.setAlignmentY(1.0F);
+        deviceSelectorCombo.setBounds(new java.awt.Rectangle(10, 0, 0, 0));
+        deviceSelectorCombo.setMinimumSize(new java.awt.Dimension(100, 29));
+        deviceSelectorCombo.setPreferredSize(new java.awt.Dimension(100, 35));
         deviceSelectorCombo.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -168,53 +181,110 @@ public class GUI extends javax.swing.JFrame
         appVersion.setText("version");
         appVersion.setToolTipText("");
 
+        sourceDeviceLabel.setText("Source Device");
+
+        outputFileFormatLabel.setText("Export File Format");
+
+        outputFileFormatCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { ".gpx" }));
+        outputFileFormatCombo.setMinimumSize(new java.awt.Dimension(100, 29));
+        outputFileFormatCombo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                outputFileFormatComboActionPerformed(evt);
+            }
+        });
+
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        resultTextArea.setEditable(false);
+        resultTextArea.setBackground(new java.awt.Color(238, 238, 238));
+        resultTextArea.setColumns(20);
+        resultTextArea.setLineWrap(true);
+        resultTextArea.setRows(2);
+        resultTextArea.setText("Ready");
+        resultTextArea.setWrapStyleWord(true);
+        resultTextArea.setAutoscrolls(false);
+        resultTextArea.setBorder(null);
+        resultTextArea.setCaretColor(new java.awt.Color(255, 255, 255));
+        resultTextArea.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        resultTextArea.setDragEnabled(false);
+        resultTextArea.setMaximumSize(new java.awt.Dimension(2147483647, 100));
+        resultTextArea.setMinimumSize(new java.awt.Dimension(37, 37));
+        resultTextArea.setRequestFocusEnabled(false);
+        resultTextArea.setVerifyInputWhenFocusTarget(false);
+        jScrollPane1.setViewportView(resultTextArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sourceFileNameText, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(convertButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(deviceSelectorCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(subHead, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(heading)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(appVersion)
-                            .addGap(14, 14, 14))
-                        .addComponent(results)
-                        .addComponent(jSeparator3)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(sourceDeviceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deviceSelectorCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(outputFileFormatLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(outputFileFormatCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(sourceFileNameText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(convertButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jSeparator3)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 437, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(subHead, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(heading)
+                                    .addGap(240, 240, 240)
+                                    .addComponent(appVersion))))
+                        .addGap(0, 10, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(filler2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(heading)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(heading)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(filler2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(appVersion))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(subHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deviceSelectorCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sourceDeviceLabel)
+                    .addComponent(deviceSelectorCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(outputFileFormatLabel)
+                    .addComponent(outputFileFormatCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(subHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(sourceFileNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(convertButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(results)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -255,17 +325,17 @@ public class GUI extends javax.swing.JFrame
         fm.processFile();
         if (fm.getFileSaved())
         {
-            results.setText("Converted & Saved into Downloads");
-            results.setForeground(Color.green.darker());
+            resultTextArea.setText(String.format("Converted and saved into\n%s", fm.getOutputDirectory()));
+            resultTextArea.setForeground(Color.green.darker());
 
-            Timer timer = new Timer(4000, new ActionListener()
+            Timer timer = new Timer(6000, new ActionListener()
             {
 
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    results.setText("Ready");
-                    results.setForeground(Color.black);
+                    resultTextArea.setText("Ready");
+                    resultTextArea.setForeground(Color.BLACK);
 
                 }
             });
@@ -277,11 +347,17 @@ public class GUI extends javax.swing.JFrame
 
     private void deviceSelectorComboActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_deviceSelectorComboActionPerformed
     {//GEN-HEADEREND:event_deviceSelectorComboActionPerformed
-        // TODO add your handling code here:
+        
         setSubhead();
 
 
     }//GEN-LAST:event_deviceSelectorComboActionPerformed
+
+    private void outputFileFormatComboActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_outputFileFormatComboActionPerformed
+    {//GEN-HEADEREND:event_outputFileFormatComboActionPerformed
+        
+        setSubhead();
+    }//GEN-LAST:event_outputFileFormatComboActionPerformed
 
 //    /**
 //     * @param args the command line arguments
@@ -334,11 +410,17 @@ public class GUI extends javax.swing.JFrame
     private javax.swing.JButton browseButton;
     private javax.swing.JButton convertButton;
     private javax.swing.JComboBox deviceSelectorCombo;
+    private javax.swing.Box.Filler filler2;
     private javax.swing.JLabel heading;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JLabel results;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JComboBox outputFileFormatCombo;
+    private javax.swing.JLabel outputFileFormatLabel;
+    private javax.swing.JTextArea resultTextArea;
+    private javax.swing.JLabel sourceDeviceLabel;
     private javax.swing.JTextField sourceFileNameText;
     private javax.swing.JLabel subHead;
     // End of variables declaration//GEN-END:variables

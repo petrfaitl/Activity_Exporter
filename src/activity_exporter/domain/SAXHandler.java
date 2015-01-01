@@ -94,12 +94,14 @@ public class SAXHandler extends DefaultHandler
                 if (smlTags != null)
                 {
                     smlTags.setHr(content);
+                    headerTags.setIsHr(true);
                 }
                 break;
             case SMLFile.CADENCE:
                 if (smlTags != null)
                 {
                     smlTags.setCadence(content);
+                    headerTags.setIsCadence(true);
                 }
                 break;
             case SMLFile.DISTANCE:
@@ -124,6 +126,7 @@ public class SAXHandler extends DefaultHandler
                 if (smlTags != null)
                 {
                     smlTags.setTemperature(content);
+                    headerTags.setIsTemperature(true);
                 }
                 break;
             case SMLFile.WATTS:

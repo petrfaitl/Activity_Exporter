@@ -26,8 +26,11 @@ public class SMLFile
     private String temperature;
     private String utc;
     private String sampleType;
-    public boolean isLocation = false;
+    private boolean isLocation = false;
     private String activityName;
+    private boolean isHr;
+    private boolean isCadence;
+    private boolean isTemperature;
 
     public static final String LATITUDE = "Latitude";
     public static final String LONGITUDE = "Longitude";
@@ -87,6 +90,7 @@ public class SMLFile
         }
 
     }
+
     public void setSimpleLatitude(String latitude)
     {
         if (!isNullOrBlank(latitude))
@@ -109,8 +113,8 @@ public class SMLFile
             this.longitude = convertRadToDegrees(longitude);
         }
     }
-    
-        public void setSimpleLongitude(String longitude)
+
+    public void setSimpleLongitude(String longitude)
     {
         if (!isNullOrBlank(longitude))
         {
@@ -155,8 +159,8 @@ public class SMLFile
         }
 
     }
-    
-        public void setSimpleHr(String hr)
+
+    public void setSimpleHr(String hr)
     {
         if (!isNullOrBlank(hr))
         {
@@ -178,8 +182,8 @@ public class SMLFile
         }
 
     }
-    
-        public void setSimpleCadence(String cadence)
+
+    public void setSimpleCadence(String cadence)
     {
         if (!isNullOrBlank(cadence))
         {
@@ -255,6 +259,14 @@ public class SMLFile
         this.temperature = convertTemp(temperature);
     }
 
+    public void setSimpleTemperature(String temperature)
+    {
+        if (!isNullOrBlank(temperature))
+        {
+            this.temperature = temperature;
+        }
+    }
+
     public String getUtc()
     {
         return utc;
@@ -296,6 +308,55 @@ public class SMLFile
     private boolean isNullOrBlank(String s)
     {
         return (s == null || s.trim().equals(""));
+    }
+
+    public boolean isLocation()
+    {
+        return isLocation;
+    }
+
+    public void setIsLocation(boolean isLocation)
+    {
+        this.isLocation = isLocation;
+    }
+
+    public boolean isHr()
+    {
+        return isHr;
+    }
+
+    public void setIsHr(boolean isHr)
+    {
+        this.isHr = isHr;
+    }
+
+    public boolean isCadence()
+    {
+        return isCadence;
+    }
+
+    public void setIsCadence(boolean isCadence)
+    {
+        this.isCadence = isCadence;
+    }
+
+    public boolean isTemperature()
+    {
+        return isTemperature;
+    }
+
+    public void setIsTemperature(boolean isTemperature)
+    {
+        this.isTemperature = isTemperature;
+    }
+
+    public boolean isExtension()
+    {
+        if (isHr || isCadence || isTemperature)
+        {
+            return true;
+        }
+        return false;
     }
 
 }

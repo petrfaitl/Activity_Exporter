@@ -30,109 +30,164 @@ public class GPXOutput
 
     public boolean isLocation = false;
     private SAXHandler saxHandler;
+    private SMLFile headerTags;
 
     public GPXOutput(SAXHandler handler)
     {
         this.saxHandler = handler;
+        this.headerTags = handler.getHeaderTags();
     }
 
     public StringBuilder buildOutputFile()
     {
         StringBuilder builder = new StringBuilder();
-        int counter = 0;
-        builder.append(appendHead());
+        builder.append(writeHead(headerTags.getUtc(), headerTags.getActivityName()));
         SMLFile lastKnownSmlTags = new SMLFile();
-        for (SMLFile smlTag : saxHandler.smlTagList)
+        for (SMLFile Tag : saxHandler.smlTagList)
         {
 
-            lastKnownSmlTags.setAltitude(smlTag.getAltitude());
-            lastKnownSmlTags.setUtc(smlTag.getUtc());
-            lastKnownSmlTags.setSimpleHr(smlTag.getHr());
-            lastKnownSmlTags.setSimpleCadence(smlTag.getCadence());
-            lastKnownSmlTags.setDistance(smlTag.getDistance());
-            lastKnownSmlTags.setSpeed(smlTag.getSpeed());
+            lastKnownSmlTags.setAltitude(Tag.getAltitude());
+            lastKnownSmlTags.setUtc(Tag.getUtc());
+            lastKnownSmlTags.setSimpleHr(Tag.getHr());
+            lastKnownSmlTags.setSimpleCadence(Tag.getCadence());
+            lastKnownSmlTags.setDistance(Tag.getDistance());
+            lastKnownSmlTags.setSpeed(Tag.getSpeed());
+            lastKnownSmlTags.setSimpleTemperature(Tag.getTemperature());
 
-            if (smlTag.isLocation)
+            if (Tag.isLocation())
             {
-                lastKnownSmlTags.setSimpleLatitude(smlTag.getLatitude());
-                lastKnownSmlTags.setSimpleLongitude(smlTag.getLongitude());
+                lastKnownSmlTags.setSimpleLatitude(Tag.getLatitude());
+                lastKnownSmlTags.setSimpleLongitude(Tag.getLongitude());
                 builder.append(writeTrkptHead(lastKnownSmlTags.getLatitude(), lastKnownSmlTags.getLongitude()));
                 builder.append(writeAltitude(lastKnownSmlTags.getAltitude()));
                 builder.append(writeTime(lastKnownSmlTags.getUtc()));
-                builder.append(writeHR(lastKnownSmlTags.getHr()));
-                builder.append(writeCadence(lastKnownSmlTags.getCadence()));
+                builder.append(writeExtensionHead(headerTags.isExtension()));
+                builder.append(writeHR(lastKnownSmlTags.getHr(),headerTags.isHr()));
+                builder.append(writeCadence(lastKnownSmlTags.getCadence(),headerTags.isCadence()));
+                builder.append(writeTemperature(lastKnownSmlTags.getTemperature(),headerTags.isTemperature()));
                 builder.append(writeDistance(lastKnownSmlTags.getDistance()));
-                builder.append(writeSpeed(lastKnownSmlTags.getSpeed()));
+               // builder.append(writeSpeed(lastKnownSmlTags.getSpeed())); not recognised by Strava
+                builder.append(writeExtensionFoot(headerTags.isExtension()));
                 builder.append(writeTrkptFoot());
             }
-            counter++;
         }
-        builder.append(appendFooter());
+        builder.append(writeFooter());
 
         return builder;
     }
 
     public String writeTrkptHead(String latitude, String longitude)
     {
-        String openTag = "      <trkpt";
+        String openTag = "   <trkpt";
 
         return String.format("%s lat=\"%s\" lon=\"%s\">\n", openTag, latitude, longitude);
     }
 
     public String writeTrkptFoot()
     {
-        return "      </trkpt>\n";
+        return "   </trkpt>\n";
     }
 
     public String writeAltitude(String altitude)
     {
         if (altitude != null)
         {
-            return String.format("        <ele>%s</ele>\n", altitude);
+            return String.format("    <ele>%s</ele>\n", altitude);
         }
         return "";
     }
 
     public String writeTime(String utc)
     {
-        return String.format("        <time>%s</time>\n", utc);
+        return String.format("    <time>%s</time>\n", utc);
+    }
+    
+    public String writeExtensionHead(boolean isExtension)
+    {
+        if(isExtension)
+        {
+            return "    <extensions>\n"
+                  +"     <gpxtpx:TrackPointExtension>\n";
+        }
+        return "";
+    }
+    
+    public String writeExtensionFoot(boolean isExtension)
+    {
+        if(isExtension)
+        {
+            return "     </gpxtpx:TrackPointExtension>\n"
+                  +"    </extensions>\n";
+        }
+        return "";
     }
 
-    public String writeHR(String hr)
+    public String writeHR(String hr, boolean isHr)
     {
-        return String.format("          <gpxtpx:TrackPointExtension xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\">\n"
-                + "            <gpxtpx:hr>%s</gpxtpx:hr>\n"
-                + "          </gpxtpx:TrackPointExtension>\n", hr);
+        if(isHr)
+        {
+            if(null != hr)
+            {
+                return String.format("      <gpxtpx:hr>%s</gpxtpx:hr>\n", hr);
+            }else
+            {
+                return String.format("      <gpxtpx:hr>%s</gpxtpx:hr>\n", "0");
+            }
+        }
+        return "";
     }
 
-    public String writeCadence(String cadence)
+    public String writeCadence(String cadence, boolean isCadence)
     {
-        return String.format("          <gpxdata:cadence>%s</gpxdata:cadence>\n", cadence);
+        if(isCadence)
+        {
+            if(null != cadence)
+            {
+                return String.format("      <gpxtpx:cad>%s</gpxtpx:cad>\n", cadence);
+            }else
+            {
+                return String.format("      <gpxtpx:cad>%s</gpxtpx:cad>\n", "0");
+            }
+        }
+        return "";
+    }
+    
+        public String writeTemperature(String temperature, boolean isTemperature)
+    {
+        if(isTemperature)
+        {
+            return String.format("      <gpxtpx:atemp>%s</gpxtpx:atemp>\n", temperature);
+        }
+        return "";
     }
 
     public String writeDistance(String distance)
     {
-        return String.format("          <gpxdata:distance>%s</gpxdata:distance>\n", distance);
+        return String.format("      <gpxtpx:distance>%s</gpxtpx:distance>\n", distance);
     }
 
     public String writeSpeed(String speed)
     {
-        return String.format("          <gpxdata:speed>%s</gpxdata:speed>\n", speed);
+        return String.format("      <gpxdata:speed>%s</gpxdata:speed>\n", speed);
     }
 
-    public String appendHead()
+    public String writeHead(String time, String name)
     {
-        return "<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        return String.format("<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd "
                 + "http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 "
                 + "http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" "
                 + "xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" "
                 + "version=\"1.1\" creator=\"ActivityExporter\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n"
-                + "  <trk>\n"
-                + "    <trkseg>\n";
+                + " <metadata>\n"
+                + "  <time>%s</time>\n"
+                + " </metadata>\n"
+                + " <trk>\n"
+                + "  <name>%s</name>\n"
+                + "  <trkseg>\n",time, name);
     }
 
-    public String appendFooter()
+    public String writeFooter()
     {
         return "    </trkseg>\n"
                 + "  </trk>\n"

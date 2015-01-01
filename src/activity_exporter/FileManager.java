@@ -41,7 +41,7 @@ public class FileManager
     private File fileOut;
     private boolean fileSaved;
     private boolean correctFileFormat;
-
+    private GPXOutput gpxOut;
     private String activityName;
 
     public FileManager(String filename)
@@ -95,10 +95,10 @@ public class FileManager
             SAXHandler saxHandler = new SAXHandler();
             saxParser.parse(fileIn, saxHandler);
             
-            GPXOutput gpxOut = new GPXOutput(saxHandler);
+            gpxOut = new GPXOutput(saxHandler);
             
             activityName = saxHandler.getHeaderTags().getActivityName() + "-";
-            sb = gpxOut.buildOutputFile();
+            
 
             
 
@@ -106,12 +106,12 @@ public class FileManager
 
         } catch (IOException e)
         {
-            System.out.println("Exception Bluck");
+            System.out.println("IO Exception");
 
         } catch (ParserConfigurationException | SAXException e)
         {
             e.printStackTrace();
-            System.out.println("Exception Bluck");
+            System.out.println("Exception");
         } 
 
     }
@@ -129,6 +129,7 @@ public class FileManager
     {
         try
         {
+            sb = gpxOut.buildOutputFile();
             setOutputFileName();
             FileWriter writer = new FileWriter(fileOut);
             writer.write(sb.toString());
@@ -144,6 +145,11 @@ public class FileManager
     public boolean getFileSaved()
     {
         return this.fileSaved;
+    }
+    
+    public String getOutputDirectory()
+    {
+        return this.fileOut.getPath().toString();
     }
 
 }
